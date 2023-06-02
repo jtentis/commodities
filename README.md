@@ -1,10 +1,14 @@
 # Commodities
-Trabalho sobre análise e variância de commodities!
+## Trabalho sobre análise e variância de commodities!
 
-<div class="stats" align="">
+<div class="stats" align="center">
 
-Primeira tela
+</br>
+</br>
+Funcionamento básico do app!
+
+</div class="stats" align="center">
   
-![](/imagens/streamlit1.png)  
+![](/imagens/streamlit2.gif)  
   
 </div class="stats" align="center">
