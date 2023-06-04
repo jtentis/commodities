@@ -22,8 +22,10 @@ st.title("DASHBOARD DAS :blue[COMMODITIES]")
 lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'CB=F', 'CT=F']
 
 #       recebendo a data do input
-data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
-data_fim=st.date_input("Escolha a data final:", date.today())
+with st.sidebar:
+    st.title(':blue[FILTRO]')
+    data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
+    data_fim=st.date_input("Escolha a data final:", date.today())
 
 #       fazendo download dos valores via yfinance
 commodities_tudo=yf.download(lista_commodities, start=data_inicio, end=data_fim)['Adj Close']
