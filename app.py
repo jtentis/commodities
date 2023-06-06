@@ -2,19 +2,23 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from datetime import date
-from PIL import Image
+#from PIL import Image
+import time
 
 st.set_page_config(
-    page_title="Commodities",
+    page_title="Página inicial / Commodities",
     page_icon="📈",
-    #layout="wide",
+    layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
         'Get Help': 'https://www.extremelycoolapp.com/help',
     }
 )
+
+with open("style.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)  
 
 st.title("DASHBOARD DAS :blue[COMMODITIES]")
 
@@ -26,6 +30,7 @@ with st.sidebar:
     st.title(':blue[FILTRO]')
     data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
     data_fim=st.date_input("Escolha a data final:", date.today())
+    st.divider()
 
 #       fazendo download dos valores via yfinance
 commodities_tudo=yf.download(lista_commodities, start=data_inicio, end=data_fim)['Adj Close']
@@ -40,21 +45,17 @@ tab1, tab2, tab3 = st.tabs(["📈 Gráfico", " 🙅‍♂️ Correlação", "✅
 
 with tab1:
     st.header("LISTAGEM")
-    
     r_pd_commodities_tudo
 
     st.divider()
-
-    st.header("GRÁFICO")
+    
     #       plotando
+    st.header("GRÁFICO")
     st.line_chart(r_pd_commodities_tudo)
 
     with st.expander("Ver explicação"):
-        st.write("O gráfico acima mostra a variação de preço (em U$), das :blue[COMMODITIES].")
-        #imagem=Image.open('/home/jtentis/Documentos/projetos/commodities/imagens/commodities.png')
-        #st.image(imagem, width=300)
+        st.write("O gráfico acima mostra a variação de preço (em :green[U$]), das :blue[COMMODITIES].")
         
-
 with tab2:
     st.header("CORRELAÇÃO")
 
@@ -66,12 +67,20 @@ with tab2:
 
 with tab3:
     st.header("CORRELAÇÃO SELECIONADA")
-    st.subheader("Selecione pelo menos 2 :blue[COMMODITIES] para correlação!")
+    st.write("Selecione pelo menos 2 :blue[COMMODITIES] para correlação!")
+    #   adicionando espaço vazio
+    st.text("")
+    st.text("")
+    #   adicionando varias colunas para poder alinhas a direita
+    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns(10)
 
-    selOuro = st.checkbox('Ouro')
-    selPrata = st.checkbox('Prata')
-    selPlatina = st.checkbox('Platina')
-
+    with col1:
+        selOuro = st.checkbox('Ouro')        
+    with col2: 
+        selPrata = st.checkbox('Prata')
+    with col3:
+        selPlatina = st.checkbox('Platina')
+            
     if selOuro and selPrata:
         lista_sel=['GC=F', 'SI=F']
         commodities_corr=yf.download(lista_sel, start=data_inicio, end=data_fim)['Adj Close']
@@ -99,4 +108,9 @@ with tab3:
 
     else:
         st.divider()
-        st.write("INVÁLIDO!")
+        #   fazendo o 'invalido' desaparecer dps de 3 segundos
+        with st.empty():
+            for seconds in range(3):
+                st.markdown('<p class="red-color">INVÁLIDO!</p>', unsafe_allow_html=True)
+                time.sleep(1)
+            st.write("")

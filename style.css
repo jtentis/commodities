@@ -1,0 +1,36 @@
+/* alinhar textos centro */
+div.css-1nt4hzx{
+    text-align: center;
+}
+
+/* checkbox estilo */
+div.css-ocqkz7 {
+    display: flex;
+    flex-wrap: wrap;
+    -moz-box-flex: 1;
+    flex-grow: 1;
+    -moz-box-align: stretch;
+    align-items: stretch;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+/* ajustar o tab */
+div.css-q8sbsg p {
+    word-break: break-word;
+    margin-bottom: 0px;
+    font-size: 14px;
+    font-weight: 1000;
+}
+
+/* alterando a cor do tab */
+.st-dg {
+    white-space: nowrap;
+    color: #bedefa
+}
+
+/* mudando cor do 'inválido' */
+.red-color {
+    font-weight: 1000 !important;
+    color: red;
+}
