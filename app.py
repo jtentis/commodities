@@ -4,7 +4,7 @@ import pandas as pd
 import datetime
 #import matplotlib.pyplot as plt
 from datetime import date
-#from PIL import Image
+from PIL import Image
 import time
 
 st.set_page_config(
@@ -23,25 +23,31 @@ with open("style.css") as f:
 st.title("DASHBOARD DAS :blue[COMMODITIES]")
 
 #       ordem das commodites no array: ouro, prata, platina, cobre, pretoleo cru, gas natural e café. 
-lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'CB=F', 'CT=F']
+lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'SB=F', 'CT=F', 'CC=F', 'ZS=F', 'ZC=F', 'LE=F', 'KE=F']
+
+image=Image.open("imagens/cefet-logo1.png")
 
 #       recebendo a data do input
 with st.sidebar:
+    st.sidebar.image(image)
+    st.text("")
     st.title(':blue[FILTRO]')
     data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
     data_fim=st.date_input("Escolha a data final:", date.today())
-    st.divider()
+    #st.divider()
 
 #       fazendo download dos valores via yfinance
 commodities_tudo=yf.download(lista_commodities, start=data_inicio, end=data_fim)['Adj Close']
+#commodities_tudo_multi=pd.DataFrame(commodities_tudo)
 
 #       renomeando as commodities
 r_pd_commodities_tudo=pd.DataFrame(commodities_tudo.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
-                                                                    'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'CB=F': 'Açúcar'}))
+                                                                    'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
+                                                                    'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
 #       tirando a hora '00:00:00' da coluna 'Date'
 r_pd_commodities_tudo.index=r_pd_commodities_tudo.index.date
 
-tab1, tab2, tab3 = st.tabs(["📈 Gráfico", " 🙅‍♂️ Correlação", "✅ Correlação selecionada"])
+tab1, tab2, tab3, tab4 = st.tabs(["📈 Gráfico Geral", "🗓️ Report Semana", " 🙅‍♂️ Correlação Geral", "✅ Correlação Selecionada"])
 
 with tab1:
     st.header("LISTAGEM")
@@ -55,8 +61,24 @@ with tab1:
 
     with st.expander("Ver explicação"):
         st.write("O gráfico acima mostra a variação de preço (em :green[U$]), das :blue[COMMODITIES].")
-        
+
 with tab2:
+    st.header("REPORT SEMANAL")
+    tickers=yf.Tickers(lista_commodities)
+    tickers_hist = tickers.history(period='max', start='2023-06-05', end='2023-06-12', interval='1wk')
+    tickers_hist.stack(level=1).rename_axis(['Date', 'Ticker']).reset_index(level=1)
+    tickers_hist.index=tickers_hist.index.date
+    tickers_hist
+
+    # df_comm_open = pd.pivot_table(tickers, index='Ticker', values='open', aggfunc='first')
+    # df_comm_high = pd.pivot_table(tickers, index='Ticker', values='High', aggfunc='max')
+    # df_comm_low = pd.pivot_table(tickers, index='Ticker', values='Low', aggfunc='min')
+    # df_comm_close = pd.pivot_table(tickers, index='Ticker', values='Close', aggfunc='last')
+    # df_comm_results = pd.concat([df_comm_open, df_comm_high, df_comm_low, df_comm_close], axis=1)
+    # df_comm_results['Resultado_%'] = (df_comm_results.Close - df_comm_results.Open)/df_comm_results.Open*100
+    # df_comm_results.head(10)
+        
+with tab3:
     st.header("CORRELAÇÃO")
 
     #       mostrando o dataframe da correlação
@@ -65,52 +87,23 @@ with tab2:
     with st.expander("Ver explicação"):
         st.write("O DataFrame acima mostra a correlação das :blue[COMMODITIES].")
 
-with tab3:
+with tab4:
     st.header("CORRELAÇÃO SELECIONADA")
     st.write("Selecione pelo menos 2 :blue[COMMODITIES] para correlação!")
     #   adicionando espaço vazio
     st.text("")
-    st.text("")
-    #   adicionando varias colunas para poder alinhas a direita
-    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns(10)
-
-    with col1:
-        selOuro = st.checkbox('Ouro')        
-    with col2: 
-        selPrata = st.checkbox('Prata')
-    with col3:
-        selPlatina = st.checkbox('Platina')
-            
-    if selOuro and selPrata:
-        lista_sel=['GC=F', 'SI=F']
-        commodities_corr=yf.download(lista_sel, start=data_inicio, end=data_fim)['Adj Close']
-        r_commodities_corr=pd.DataFrame(commodities_corr.rename(columns={'GC=F': 'Ouro', 'SI=F':'Prata'}))
-        st.dataframe(r_commodities_corr.corr())
-
-    elif selOuro and selPlatina:
-        lista_sel2=['GC=F', 'PL=F']
-        commodities_corr=yf.download(lista_sel2, start=data_inicio, end=data_fim)['Adj Close']
-        r_commodities_corr2=pd.DataFrame(commodities_corr.rename(columns={'GC=F': 'Ouro', 'PL=F':'Platina'}))
-        st.dataframe(r_commodities_corr2.corr())
-
-
-    elif selPrata and selPlatina:
-        lista_sel3=['SI=F', 'PL=F']
-        commodities_corr=yf.download(lista_sel3, start=data_inicio, end=data_fim)['Adj Close']
-        r_commodities_corr3=pd.DataFrame(commodities_corr.rename(columns={'SI=F': 'Prata', 'PL=F':'Platina'}))
-        st.dataframe(r_commodities_corr3.corr())
     
-    elif selPrata and selPlatina and selOuro:
-        lista_sel4=['SI=F', 'PL=F', 'GC=F']
-        commodities_corr=yf.download(lista_sel4, start=data_inicio, end=data_fim)['Adj Close']
-        r_commodities_corr4=pd.DataFrame(commodities_corr.rename(columns={'SI=F': 'Prata', 'PL=F':'Platina', 'GC=F':'Ouro'}))
-        st.dataframe(r_commodities_corr4.corr())
+    r_pd_commodities_tudo.index.date=r_pd_commodities_tudo.index
+    todas_colunas=r_pd_commodities_tudo.columns.tolist()
+    colunas_selecionadas=st.multiselect("", options=todas_colunas)
+    #st.write("Você selecionou: ", colunas_selecionadas)
 
+    if colunas_selecionadas:
+        colunas_selecionadas_df=yf.download(todas_colunas, start=data_inicio, end=data_fim)['Adj Close']
+        r_pd_colunas_selecionadas=pd.DataFrame(colunas_selecionadas_df.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
+                                                                    'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
+                                                                    'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
+        st.dataframe(r_pd_colunas_selecionadas.corr())
     else:
-        st.divider()
-        #   fazendo o 'invalido' desaparecer dps de 3 segundos
-        with st.empty():
-            for seconds in range(3):
-                st.markdown('<p class="red-color">INVÁLIDO!</p>', unsafe_allow_html=True)
-                time.sleep(1)
-            st.write("")
+        st.warning("INVÁLIDO!")
+

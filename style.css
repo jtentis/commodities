@@ -3,18 +3,6 @@ div.css-1nt4hzx{
     text-align: center;
 }
 
-/* checkbox estilo */
-div.css-ocqkz7 {
-    display: flex;
-    flex-wrap: wrap;
-    -moz-box-flex: 1;
-    flex-grow: 1;
-    -moz-box-align: stretch;
-    align-items: stretch;
-    gap: 1rem;
-    justify-content: space-between;
-}
-
 /* ajustar o tab */
 div.css-q8sbsg p {
     word-break: break-word;
@@ -33,4 +21,18 @@ div.css-q8sbsg p {
 .red-color {
     font-weight: 1000 !important;
     color: red;
+}
+
+/* alinhando o st,write do multiselect na esquerda */
+.object-key-val{
+    text-align: left;
+}
+#tabs-bui7-tabpanel-2 > div:nth-child(1) > div:nth-child(1) > div:nth-child(5) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1){
+    text-align: left;
+}
+
+/* alinhando e corrigindo tamanho do logo da cefet */
+.css-1v0mbdj > img:nth-child(1){
+    width: 200px;
+    padding-left: 80px;
 }
