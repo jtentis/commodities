@@ -11,10 +11,14 @@ div.css-q8sbsg p {
     font-weight: 1000;
 }
 
+div.css-1p1nwyz:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > h1:nth-child(1) > span:nth-child(1){
+    color: orange
+}
+
 /* alterando a cor do tab */
 .st-dg {
     white-space: nowrap;
-    color: #bedefa
+    color: white
 }
 
 /* mudando cor do 'inválido' */
@@ -33,6 +37,6 @@ div.css-q8sbsg p {
 
 /* alinhando e corrigindo tamanho do logo da cefet */
 .css-1v0mbdj > img:nth-child(1){
-    width: 200px;
-    padding-left: 80px;
+    width: 370px;
+    
 }
