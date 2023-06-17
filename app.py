@@ -2,10 +2,11 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import datetime
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from datetime import date
 from PIL import Image
-import time
+#import seaborn as sns
+#import time
 
 st.set_page_config(
     page_title="Página inicial / Commodities",
@@ -13,25 +14,25 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
+        'Get Help': 'https://www.google.com'
     }
 )
 
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)  
 
-st.title("DASHBOARD DAS :blue[COMMODITIES]")
+st.title("DASHBOARD DAS :orange[COMMODITIES]")
 
 #       ordem das commodites no array: ouro, prata, platina, cobre, pretoleo cru, gas natural e café. 
 lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'SB=F', 'CT=F', 'CC=F', 'ZS=F', 'ZC=F', 'LE=F', 'KE=F']
 
-image=Image.open("imagens/cefet-logo1.png")
+image=Image.open("imagens/OBInvestLogo.png")
 
 #       recebendo a data do input
 with st.sidebar:
     st.sidebar.image(image)
     st.text("")
-    st.title(':blue[FILTRO]')
+    st.title(':orange[FILTRO]')
     data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
     data_fim=st.date_input("Escolha a data final:", date.today())
     #st.divider()
@@ -47,7 +48,7 @@ r_pd_commodities_tudo=pd.DataFrame(commodities_tudo.rename(columns={'CL=F':'Petr
 #       tirando a hora '00:00:00' da coluna 'Date'
 r_pd_commodities_tudo.index=r_pd_commodities_tudo.index.date
 
-tab1, tab2, tab3, tab4 = st.tabs(["📈 Gráfico Geral", "🗓️ Report Semana", " 🙅‍♂️ Correlação Geral", "✅ Correlação Selecionada"])
+tab1, tab2, tab3, tab4 = st.tabs(["📈 Gráfico Geral", "🗓️ Report Semanal", " 🙅‍♂️ Correlação Geral", "✅ Correlação Selecionada"])
 
 with tab1:
     st.header("LISTAGEM")
@@ -58,9 +59,15 @@ with tab1:
     #       plotando
     st.header("GRÁFICO")
     st.line_chart(r_pd_commodities_tudo)
+    #st.bar_chart(r_pd_commodities_tudo)
 
     with st.expander("Ver explicação"):
-        st.write("O gráfico acima mostra a variação de preço (em :green[U$]), das :blue[COMMODITIES].")
+        st.write("O gráfico acima mostra a variação de preço (em :green[U$]), das :orange[COMMODITIES].")
+    
+    st.download_button("Baixar DataFrame", 
+                       r_pd_commodities_tudo.to_csv(),
+                       file_name='commodities_data.csv',
+                       mime='text/csv')
 
 with tab2:
     st.header("REPORT SEMANAL")
@@ -81,29 +88,47 @@ with tab2:
 with tab3:
     st.header("CORRELAÇÃO")
 
-    #       mostrando o dataframe da correlação
-    st.dataframe(r_pd_commodities_tudo.corr())
+    #       mostrando o dataframe da correlação e colocando heatmap
+    corr_commodities_tudo=r_pd_commodities_tudo.corr()
+    download=r_pd_commodities_tudo.corr()
+    cmap=plt.cm.get_cmap('RdYlGn')
+    st.dataframe(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+    # fig, ax = plt.subplots()
+    # sns.heatmap(r_pd_commodities_tudo.corr(), annot=True, ax=ax, linecolor="black", linewidths=0.5)
+    # # plt.figure(figsize=(10,6))
+    # st.write(fig)
 
     with st.expander("Ver explicação"):
-        st.write("O DataFrame acima mostra a correlação das :blue[COMMODITIES].")
+        st.write("O DataFrame acima mostra a correlação das :orange[COMMODITIES].")
+
+    st.download_button("Baixar Tabela", 
+                       r_pd_commodities_tudo.to_csv(),
+                       file_name='commodities_table.csv',
+                       mime='text/csv')
 
 with tab4:
     st.header("CORRELAÇÃO SELECIONADA")
-    st.write("Selecione pelo menos 2 :blue[COMMODITIES] para correlação!")
+    st.write("Selecione pelo menos 2 :orange[COMMODITIES] para correlação!")
     #   adicionando espaço vazio
     st.text("")
     
-    r_pd_commodities_tudo.index.date=r_pd_commodities_tudo.index
-    todas_colunas=r_pd_commodities_tudo.columns.tolist()
-    colunas_selecionadas=st.multiselect("", options=todas_colunas)
-    #st.write("Você selecionou: ", colunas_selecionadas)
-
+    todas_colunas = r_pd_commodities_tudo.columns.tolist()
+    options_key = "_".join(todas_colunas)
+    colunas_selecionadas = st.multiselect("Select columns", options=todas_colunas)
+    
     if colunas_selecionadas:
-        colunas_selecionadas_df=yf.download(todas_colunas, start=data_inicio, end=data_fim)['Adj Close']
-        r_pd_colunas_selecionadas=pd.DataFrame(colunas_selecionadas_df.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
-                                                                    'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
-                                                                    'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
-        st.dataframe(r_pd_colunas_selecionadas.corr())
+        colunas_corr = r_pd_commodities_tudo[colunas_selecionadas]
+        color_change_colunas_corr=colunas_corr.corr()
+        cmap=plt.cm.get_cmap('RdYlGn')
+        st.dataframe(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
     else:
         st.warning("INVÁLIDO!")
-
+        
+    # if colunas_selecionadas:
+    #     colunas_selecionadas_df=yf.download(todas_colunas, start=data_inicio, end=data_fim)['Adj Close']
+    #     r_pd_colunas_selecionadas=pd.DataFrame(colunas_selecionadas_df.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
+    #                                                                 'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
+    #                                                                 'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
+    #     st.dataframe(r_pd_colunas_selecionadas.corr())
+    # else:
+    #     st.warning("INVÁLIDO!")
