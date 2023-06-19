@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import date
 from PIL import Image
 #import seaborn as sns
-#import time
+import time
 
 st.set_page_config(
     page_title="Página inicial / Commodities",
@@ -35,7 +35,25 @@ with st.sidebar:
     st.title(':orange[FILTRO]')
     data_inicio=st.date_input("Escolha a data inicial:", datetime.date(2023, 1, 1))
     data_fim=st.date_input("Escolha a data final:", date.today())
-    #st.divider()
+    st.divider()
+    st.title(':orange[HEATMAP]')
+    heatmap_botao = st.radio("Selecione o modo:",('Ligado', 'Desligado'))
+    st.divider()
+    st.title(':orange[TABELA]')
+    tabela_botao = st.radio("Selecione o tipo de tabela:",('Grande', 'Compacta'))
+    st.divider()
+    # with st.container():
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    #     st.write("")
+    # # with st.spinner('Carregando...'):
+    # #     time.sleep(2)
 
 #       fazendo download dos valores via yfinance
 commodities_tudo=yf.download(lista_commodities, start=data_inicio, end=data_fim)['Adj Close']
@@ -51,7 +69,7 @@ r_pd_commodities_tudo.index=r_pd_commodities_tudo.index.date
 tab1, tab2, tab3, tab4 = st.tabs(["📈 Gráfico Geral", "🗓️ Report Semanal", " 🙅‍♂️ Correlação Geral", "✅ Correlação Selecionada"])
 
 with tab1:
-    st.header("LISTAGEM")
+    st.header("TABELA")
     r_pd_commodities_tudo
 
     st.divider()
@@ -64,9 +82,9 @@ with tab1:
     with st.expander("Ver explicação"):
         st.write("O gráfico acima mostra a variação de preço (em :green[U$]), das :orange[COMMODITIES].")
     
-    st.download_button("Baixar DataFrame", 
+    st.download_button("Baixar Tabela", 
                        r_pd_commodities_tudo.to_csv(),
-                       file_name='commodities_data.csv',
+                       file_name='commodities_dados.csv',
                        mime='text/csv')
 
 with tab2:
@@ -90,19 +108,25 @@ with tab3:
 
     #       mostrando o dataframe da correlação e colocando heatmap
     corr_commodities_tudo=r_pd_commodities_tudo.corr()
-    download=r_pd_commodities_tudo.corr()
-    cmap=plt.cm.get_cmap('RdYlGn')
-    st.dataframe(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
-    # fig, ax = plt.subplots()
-    # sns.heatmap(r_pd_commodities_tudo.corr(), annot=True, ax=ax, linecolor="black", linewidths=0.5)
-    # # plt.figure(figsize=(10,6))
-    # st.write(fig)
+    download_all=r_pd_commodities_tudo.corr()
+    if heatmap_botao == 'Ligado':
+        if tabela_botao == 'Grande':
+            cmap=plt.cm.get_cmap('RdYlGn')
+            st.table(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+        else:
+            cmap=plt.cm.get_cmap('RdYlGn')
+            st.dataframe(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+    else:
+        if tabela_botao == 'Compacta':
+            st.dataframe(r_pd_commodities_tudo.corr())
+        else:
+            st.table(r_pd_commodities_tudo.corr())
 
     with st.expander("Ver explicação"):
         st.write("O DataFrame acima mostra a correlação das :orange[COMMODITIES].")
 
     st.download_button("Baixar Tabela", 
-                       r_pd_commodities_tudo.to_csv(),
+                       download_all.to_csv(),
                        file_name='commodities_table.csv',
                        mime='text/csv')
 
@@ -112,6 +136,7 @@ with tab4:
     #   adicionando espaço vazio
     st.text("")
     
+    #   fazendo o multiselect
     todas_colunas = r_pd_commodities_tudo.columns.tolist()
     options_key = "_".join(todas_colunas)
     colunas_selecionadas = st.multiselect("Select columns", options=todas_colunas)
@@ -119,16 +144,23 @@ with tab4:
     if colunas_selecionadas:
         colunas_corr = r_pd_commodities_tudo[colunas_selecionadas]
         color_change_colunas_corr=colunas_corr.corr()
-        cmap=plt.cm.get_cmap('RdYlGn')
-        st.dataframe(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+        if heatmap_botao == 'Ligado':
+            if tabela_botao == 'Grande':
+                cmap=plt.cm.get_cmap('RdYlGn')
+                st.table(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+            else:
+                cmap=plt.cm.get_cmap('RdYlGn')
+                st.dataframe(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
+        else:
+            if tabela_botao == 'Compacta':
+                st.dataframe(color_change_colunas_corr)
+            else:
+                st.table(color_change_colunas_corr)
     else:
         st.warning("INVÁLIDO!")
-        
-    # if colunas_selecionadas:
-    #     colunas_selecionadas_df=yf.download(todas_colunas, start=data_inicio, end=data_fim)['Adj Close']
-    #     r_pd_colunas_selecionadas=pd.DataFrame(colunas_selecionadas_df.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
-    #                                                                 'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
-    #                                                                 'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
-    #     st.dataframe(r_pd_colunas_selecionadas.corr())
-    # else:
-    #     st.warning("INVÁLIDO!")
+    
+    download_selection=r_pd_commodities_tudo[colunas_selecionadas].corr()
+    st.download_button("Baixar Tabela", 
+                       download_selection.to_csv(),
+                       file_name='commodities_table_selection.csv',
+                       mime='text/csv')
