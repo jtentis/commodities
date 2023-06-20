@@ -3,3 +3,5 @@ base="dark"
 primaryColor="#f39a32"
 secondaryBackgroundColor="#172639"
 
+[deprecation]
+showPyplotGlobalUse = false
