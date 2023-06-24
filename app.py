@@ -182,10 +182,10 @@ with tab3:
         st.empty()
     if heatmap_botao == 'Ligado':
         if tabela_botao == 'Grande':
-            cmap=plt.cm.get_cmap('RdYlGn')
+            cmap=plt.colormaps['RdYlGn']
             st.table(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
         else:
-            cmap=plt.cm.get_cmap('RdYlGn')
+            cmap=plt.colormaps['RdYlGn']
             st.dataframe(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
     else:
         if tabela_botao == 'Compacta':
@@ -209,45 +209,53 @@ with tab4:
     #   fazendo o multiselect
     todas_colunas = r_pd_commodities_tudo.columns.tolist()
     options_key = "_".join(todas_colunas)
-    comm_selecionadas = st.multiselect('Selecione as :orange[COMMODITIES]:', options=todas_colunas)
     todas_colunas_ativos=r_pd_ativos.columns.tolist()
     options_key = "_".join(todas_colunas_ativos)
-    tudo=comm_selecionadas
-    download_selection=r_pd_commodities_tudo[comm_selecionadas].corr()
-    ativos_selecionados=comm_selecionadas
-    if ativos_corr == 'Sim':
-        ativos_selecionados = st.multiselect('Selecione os :blue[ATIVOS]:', options=todas_colunas_ativos)
-        tudo=(comm_selecionadas+ativos_selecionados)
-        download_selection=resultado_juncao[tudo].corr()
-    else:  
-        st.empty()
+    tudo=''
+    enviado_ativo=''
+    ativos_selecionados=''
+    enviado_comm=''
+    if ativos_corr == 'Não':
+        with st.form("coluna_commodity"):
+            comm_selecionadas = st.multiselect('Selecione as :orange[COMMODITIES]:', options=todas_colunas)
+            enviado_comm=st.form_submit_button('Executar')
+            tudo=comm_selecionadas
+            download_selection=resultado_juncao[tudo].corr()
+    else:
+        with st.form("geral"):
+            comm_selecionadas = st.multiselect('Selecione as :orange[COMMODITIES]:', options=todas_colunas)
+            tudo=comm_selecionadas
+            ativos_selecionados = st.multiselect('Selecione os :blue[ATIVOS]:', options=todas_colunas_ativos)
+            tudo=(comm_selecionadas+ativos_selecionados)
+            enviado_ativo=st.form_submit_button('Executar')
+    download_selection=resultado_juncao[tudo].corr()
 
-    if comm_selecionadas:
+    if enviado_comm:
         colunas_corr = resultado_juncao[tudo]
         color_change_colunas_corr=colunas_corr.corr()
         download_selection=resultado_juncao[tudo].corr()
         if heatmap_botao == 'Ligado':
             if tabela_botao == 'Grande':
-                cmap=plt.cm.get_cmap('RdYlGn')
+                cmap=plt.colormaps['RdYlGn']
                 st.table(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
             else:
-                cmap=plt.cm.get_cmap('RdYlGn')
+                cmap=plt.colormaps['RdYlGn']
                 st.dataframe(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
         else:
             if tabela_botao == 'Compacta':
                 st.dataframe(color_change_colunas_corr)
             else:
                 st.table(color_change_colunas_corr)
-    elif ativos_selecionados:
+    elif enviado_ativo:
         colunas_corr = resultado_juncao[tudo]
         color_change_colunas_corr=colunas_corr.corr()
         download_selection=resultado_juncao[tudo].corr()
         if heatmap_botao == 'Ligado':
             if tabela_botao == 'Grande':
-                cmap=plt.cm.get_cmap('RdYlGn')
+                cmap=plt.colormaps['RdYlGn']
                 st.table(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
             else:
-                cmap=plt.cm.get_cmap('RdYlGn')
+                cmap=plt.colormaps['RdYlGn']
                 st.dataframe(color_change_colunas_corr.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
         else:
             if tabela_botao == 'Compacta':
