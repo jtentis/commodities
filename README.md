@@ -7,9 +7,11 @@
 </br>
 Funcionamento básico do app!
 
+![](/imagens/conclusaoPt2.gif) 
+
 </div class="stats" align="center">
   
-![](/imagens/conclusaoPt1.gif)  
+ 
   
 </div class="stats" align="center">
 
