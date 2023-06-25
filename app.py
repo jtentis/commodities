@@ -4,9 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
 from PIL import Image
-# import matplotlib
-# import time
-# import datetime
 
 st.set_page_config(
     page_title="Página inicial / Commodities",
@@ -51,12 +48,33 @@ with st.sidebar:
         
 
 #       fazendo download dos valores via yfinance
-commodities_tudo=yf.download(lista_commodities, start=data_inicio, end=data_fim)['Adj Close']
-ativos_tudo=yf.download(lista_ativos, start=data_inicio, end=data_fim)['Adj Close']
 
-tickers = yf.Tickers(lista_commodities)
+@st.cache_data
+def cache_comm(nome_modelo):
+    commodities_tudo=yf.download(nome_modelo, start=data_inicio, end=data_fim)['Adj Close']
+    return (commodities_tudo)
+
+@st.cache_resource
+def cache_ativos(nome_modelo):
+    ativos_tudo=yf.download(nome_modelo, start=data_inicio, end=data_fim)['Adj Close']
+    return (ativos_tudo)
+
+@st.cache_resource
+def cache_tickers(nome_modelo):
+    tickers=yf.Tickers(nome_modelo)
+    return (tickers)
+
+@st.cache_resource
+def cache_tickers_hist():
+    download_hist = tickers.history(start=week, end=data_fim, interval='1wk')
+    return (download_hist)
+
+
+commodities_tudo=cache_comm(lista_commodities)
+ativos_tudo=cache_ativos(lista_ativos)
+tickers = cache_tickers(lista_commodities)
 week=data_fim-timedelta(days=1)
-tickers_hist = tickers.history(start=week, end=data_fim, interval='1wk')
+tickers_hist=cache_tickers_hist()
 
 #       renomeando as commodities
 r_pd_commodities_tudo=pd.DataFrame(commodities_tudo.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
@@ -86,14 +104,15 @@ with tab1:
     
     #       plotando
     st.header("GRÁFICO")
-    grafico_botao=st.radio("Selecione o modo do gráfico:",('Completo', 'Único'))
+    grafico_botao=st.radio("Selecione o modo do gráfico:",('Completo', 'Selecionado'))
     if grafico_botao == 'Completo':
         st.line_chart(r_pd_commodities_tudo)
     else:
-        grafico_all=r_pd_commodities_tudo.columns.tolist()
-        options_key = "_".join(grafico_all)
-        selecao_grafico=st.multiselect('Selecione as commodities para plotar:', options=grafico_all)
-        st.write("")
+        with st.form("grafico"):
+            grafico_all=r_pd_commodities_tudo.columns.tolist()
+            options_key = "_".join(grafico_all)
+            selecao_grafico=st.multiselect('Selecione as commodities para plotar:', options=grafico_all)
+            envido_grafico=st.form_submit_button("Executar")
         st.line_chart(r_pd_commodities_tudo[selecao_grafico])
 
 
@@ -208,9 +227,9 @@ with tab4:
     ativos_corr=st.radio("Deseja adicionar ativos para correlação?", ('Sim', 'Não'), index=1)
     #   fazendo o multiselect
     todas_colunas = r_pd_commodities_tudo.columns.tolist()
-    options_key = "_".join(todas_colunas)
+    # options_key = "_".join(todas_colunas)
     todas_colunas_ativos=r_pd_ativos.columns.tolist()
-    options_key = "_".join(todas_colunas_ativos)
+    # options_key = "_".join(todas_colunas_ativos)
     tudo=''
     enviado_ativo=''
     ativos_selecionados=''
