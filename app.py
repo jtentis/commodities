@@ -150,7 +150,7 @@ with tab2:
 
     data = yf.download(list(dif_percentual.keys()), start=data_inicio, end=data_fim)['Close']
 
-    weekly_returns = data.pct_change(periods=1) * 100
+    weekly_returns = data.pct_change(periods=1, fill_method='ffill', axis=0) * 100
     sorted_returns = weekly_returns.iloc[-1].sort_values(ascending=False)
     sorted_indices = sorted_returns
 
@@ -161,6 +161,7 @@ with tab2:
     ax.barh([dif_percentual[idx] for idx in positive_returns.index], positive_returns, color='green')
     ax.barh([dif_percentual[idx] for idx in negative_returns.index], negative_returns, color='red')
     ax.axvline(x=0, color='white', linestyle='--')
+    # plt.title('Diferença percentual em relação a semana anterior', color='w')
     # plt.xlabel('Variação Percetual')
     # plt.ylabel('Commodities')
     fig.set_figwidth(15)
@@ -180,6 +181,7 @@ with tab2:
     for i, (index, value) in enumerate(zip(negative_returns.index, negative_returns)):
         ax.text(0, y+1+i, f'{value:.2f}%', ha='left', va='center', color='white', fontweight='bold')
 
+    st.subheader('Diferença percentual em relação a semana anterior')
     st.pyplot(plt.show())
     st.write('')
     st.write('')
