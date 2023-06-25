@@ -208,9 +208,9 @@ with tab3:
             st.dataframe(corr_commodities_tudo.style.background_gradient(cmap=cmap,vmin=(-1),vmax=1, axis=None))
     else:
         if tabela_botao == 'Compacta':
-            st.dataframe(r_pd_commodities_tudo.corr())
+            st.dataframe(corr_commodities_tudo.corr())
         else:
-            st.table(r_pd_commodities_tudo.corr())
+            st.table(corr_commodities_tudo.corr())
 
     with st.expander("Ver explicação"):
         st.write("A tabela acima mostra a correlação das :orange[COMMODITIES] com :blue[ATIVOS], caso a opção tenha sido marcada.")
