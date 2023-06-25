@@ -23,18 +23,21 @@ st.title("DASHBOARD DAS :orange[COMMODITIES]")
 #       ordem das commodites no array: ouro, prata, platina, cobre, pretoleo cru, gas natural e café. 
 lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'SB=F', 'CT=F', 'CC=F', 'ZS=F', 'ZC=F', 'LE=F', 'KE=F']
 lista_ativos = ["^BVSP","GGBR4.SA", "CMIG4.SA", "PETR4.SA", "PETR3.SA", "VIVT3.SA", "VALE3.SA", "BBAS3.SA", "CPLE6.SA", "JBSS3.SA", 
-                 "TRPL4.SA", "SANB11.SA", "BBSE3.SA", "EGIE3.SA", "B3SA3.SA", "TAEE11.SA", "ITSA4.SA", "VBBR3.SA", "GOAU4.SA", "CSNA3.SA", "CMIG3.SA", "CPFE3.SA"]
+                 "TRPL4.SA", "SANB11.SA", "BBSE3.SA", "EGIE3.SA", "B3SA3.SA", "TAEE11.SA", "ITSA4.SA", "VBBR3.SA", "GOAU4.SA", "CSNA3.SA", "CMIG3.SA", "CPFE3.SA",
+                 "ABEV3.SA", "BBAS3.SA", "BBDC3.SA", "ELET3.SA", "ENGI11.SA", "RDOR3.SA", "RENT3.SA", "SUZB3.SA", "RAIZ4.SA", "JBSS3.SA", 
+                 "MGLU3.SA", "AMER3.SA", "CRFB3.SA", "NTCO3.SA"]
 
 logo=Image.open("imagens/OBInvestLogo.png")
 
 #       recebendo a data do input
 with st.sidebar:
     st.sidebar.image(logo)
-    st.text("")
     st.title(':orange[FILTRO]')
     semana=date.today()-timedelta(days=30)
     data_inicio=st.date_input("Escolha a data inicial:", semana)
     data_fim=st.date_input("Escolha a data final:")
+    st.expander("IMPORTANTE").write("Caso deseje mudar as datas, antes de mudar, aperte a :orange[TECLA C] "
+                                    "ou vá até o canto superior direito no menu suspenso e aperte: :orange[CLEAR CACHE].")
     st.divider()
     st.title(':orange[HEATMAP]')
     heatmap_botao = st.radio("Selecione o modo:",('Ligado', 'Desligado'))
@@ -43,7 +46,9 @@ with st.sidebar:
     tabela_botao = st.radio("Selecione o tipo de tabela:",('Compacta', 'Grande'))
     st.divider()
     st.write('')
-    st.markdown("[![Fonte](https://public.flourish.studio/uploads/4e293af7-8464-45d7-9428-a96963909e42.png)](https://finance.yahoo.com/commodities/)")
+    st.write('')
+    st.markdown("[![Fonte](https://public.flourish.studio/uploads/4e293af7-8464-45d7-9428-a96963909e42.png)]"
+                "(https://finance.yahoo.com/commodities/)")
     
         
 
@@ -180,7 +185,8 @@ with tab2:
     st.write('')
 
     with st.expander("Ver explicação"):
-        st.write("O gráfico acima mostra a variação percentual das :orange[COMMODITIES] de acordo com a semana escolhida, que também pode ser visualizado pela tabela!")
+        st.write("O gráfico acima mostra a variação percentual das :orange[COMMODITIES] de acordo com a semana escolhida, "
+                 "que também pode ser visualizado pela tabela!")
     
     download_report=report_semanal
     st.download_button("Baixar Tabela", 
@@ -192,7 +198,6 @@ with tab3:
     st.header("CORRELAÇÃO")
     botao_corr=st.radio('Deseja ver com :blue[ATIVOS] juntos?',('Sim','Não'), index=1)
     resultado_juncao=pd.concat([r_pd_commodities_tudo, r_pd_ativos], axis='columns')
-    resultado_juncao.index=resultado_juncao.index.date
     #       mostrando o dataframe da correlação e colocando heatmap
     corr_commodities_tudo=r_pd_commodities_tudo.corr()
     if botao_corr == 'Sim':
