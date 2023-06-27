@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from datetime import date, timedelta
 from PIL import Image
 
+#   configs da pagina
 st.set_page_config(
     page_title="Página inicial / Commodities",
     page_icon="📈",
@@ -15,45 +16,19 @@ st.set_page_config(
     }
 )
 
+#   comando para o programa ler o style.css
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)  
 
 st.title("DASHBOARD DAS :orange[COMMODITIES]")
 
-#       ordem das commodites no array: ouro, prata, platina, cobre, pretoleo cru, gas natural e café. 
 lista_commodities = ['GC=F', 'SI=F', 'PL=F', 'HG=F', 'CL=F', 'NG=F', 'KC=F', 'SB=F', 'CT=F', 'CC=F', 'ZS=F', 'ZC=F', 'LE=F', 'KE=F']
 lista_ativos = ["^BVSP","GGBR4.SA", "CMIG4.SA", "PETR4.SA", "PETR3.SA", "VIVT3.SA", "VALE3.SA", "BBAS3.SA", "CPLE6.SA", "JBSS3.SA", 
                  "TRPL4.SA", "SANB11.SA", "BBSE3.SA", "EGIE3.SA", "B3SA3.SA", "TAEE11.SA", "ITSA4.SA", "VBBR3.SA", "GOAU4.SA", "CSNA3.SA", "CMIG3.SA", "CPFE3.SA",
                  "ABEV3.SA", "BBAS3.SA", "BBDC3.SA", "ELET3.SA", "ENGI11.SA", "RDOR3.SA", "RENT3.SA", "SUZB3.SA", "RAIZ4.SA", "JBSS3.SA", 
                  "MGLU3.SA", "AMER3.SA", "CRFB3.SA", "NTCO3.SA"]
 
-logo=Image.open("imagens/OBInvestLogo.png")
-
-#       recebendo a data do input
-with st.sidebar:
-    st.sidebar.image(logo)
-    st.title(':orange[FILTRO]')
-    semana=date.today()-timedelta(days=30)
-    data_inicio=st.date_input("Escolha a data inicial:", semana)
-    data_fim=st.date_input("Escolha a data final:")
-    st.expander("IMPORTANTE").write("Caso deseje mudar as datas, antes de mudar, aperte a :orange[TECLA C] "
-                                    "ou vá até o canto superior direito no menu suspenso e aperte: :orange[CLEAR CACHE].")
-    st.divider()
-    st.title(':orange[HEATMAP]')
-    heatmap_botao = st.radio("Selecione o modo:",('Ligado', 'Desligado'))
-    st.divider()
-    st.title(':orange[TABELA]')
-    tabela_botao = st.radio("Selecione o tipo de tabela:",('Compacta', 'Grande'))
-    st.divider()
-    st.write('')
-    st.write('')
-    st.markdown("[![Fonte](https://public.flourish.studio/uploads/4e293af7-8464-45d7-9428-a96963909e42.png)]"
-                "(https://finance.yahoo.com/commodities/)")
-    
-        
-
-#       fazendo download dos valores via yfinance
-
+#       função de download sendo armazenada no cache
 @st.cache_data
 def cache_comm(nome_modelo):
     commodities_tudo=yf.download(nome_modelo, start=data_inicio, end=data_fim)['Adj Close']
@@ -74,6 +49,30 @@ def cache_tickers_hist():
     download_hist = tickers.history(start=week, end=data_fim, interval='1wk')
     return (download_hist)
 
+logo=Image.open("imagens/OBInvestLogo.png")
+
+with st.sidebar:
+    st.sidebar.image(logo)
+    st.title(':orange[FILTRO]')
+    semana=date.today()-timedelta(days=30)
+    data_inicio=st.date_input("Escolha a data inicial:", semana)
+    data_fim=st.date_input("Escolha a data final:")
+    with st.expander("IMPORTANTE"):
+        st.write("Caso queira mudar as datas, mude e depois clique no botão :orange[EXECUTAR CACHE] para salvar os dados no cache novamente!")
+        if st.sidebar.button('Executar cache'):
+            cache_comm.clear(), cache_ativos.clear(), cache_tickers.clear(), cache_tickers_hist.clear()
+    st.divider()
+    st.title(':orange[HEATMAP]')
+    heatmap_botao = st.radio("Selecione o modo:",('Ligado', 'Desligado'))
+    st.divider()
+    st.title(':orange[TABELA]')
+    tabela_botao = st.radio("Selecione o tipo de tabela:",('Compacta', 'Grande'))
+    st.divider()
+    st.write('')
+    st.write('')
+    st.markdown("[![Fonte](https://public.flourish.studio/uploads/4e293af7-8464-45d7-9428-a96963909e42.png)]"
+                "(https://finance.yahoo.com/commodities/)")
+        
 
 commodities_tudo=cache_comm(lista_commodities)
 ativos_tudo=cache_ativos(lista_ativos)
@@ -81,7 +80,7 @@ tickers = cache_tickers(lista_commodities)
 week=data_fim-timedelta(days=1)
 tickers_hist=cache_tickers_hist()
 
-#       renomeando as commodities
+#       renomeando as commodities e passando para o pd
 r_pd_commodities_tudo=pd.DataFrame(commodities_tudo.rename(columns={'CL=F':'Petroleo Cru', 'GC=F':'Ouro', 'HG=F':'Cobre', 'KC=F':'Café', 'NG=F':'Gás natural', 
                                                                     'PL=F':'Platina', 'SI=F':'Prata', 'CT=F':'Algodão', 'SB=F': 'Açúcar', 'CC=F':'Cacau', 
                                                                     'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
@@ -93,7 +92,7 @@ r_tickers_hist=pd.DataFrame(tickers_hist.rename(columns={'CL=F':'Petroleo Cru', 
                                                                     'ZS=F': 'Soja', 'ZC=F':'Milho', 'LE=F':'Gado', 'KE=F':'Trigo'}))
 r_pd_ativos=pd.DataFrame(ativos_tudo)
 
-#       tirando a hora '00:00:00' da coluna 'Date'
+#       tirar a hora '00:00:00' da coluna 'Date'
 # r_pd_commodities_tudo.index=r_pd_commodities_tudo.index.date
 
 tab1, tab2, tab3, tab4 = st.tabs(["📈 Gráfico Geral", "🗓️ Report Semanal", " 🙅‍♂️ Correlação Geral", "✅ Correlação Selecionada"])
