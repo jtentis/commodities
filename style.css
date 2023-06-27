@@ -41,30 +41,27 @@ div.css-1p1nwyz:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-chi
     
 }
 /* colocando todos os radio no modo horizontal */
-div.css-1p1nwyz:nth-child(8) > div:nth-child(1) > div:nth-child(2){
+#root > div:nth-child(1) > div.withScreencast > div > div > div > section.css-ilhyjd.e1fqkh3o11 > div.css-6qob1r.e1fqkh3o3 > div.css-1544g2n.e1fqkh3o4 > div > div:nth-child(1) > div > div:nth-child(8) > div > div{
    flex-direction: row; 
 }
 
-div.element-container:nth-child(11) > div:nth-child(1) > div:nth-child(2){
+div.st-b3.st-eu{
     flex-direction: row;
 }
 
-div.css-1nt4hzx:nth-child(5) > div:nth-child(1) > div:nth-child(2){
-    flex-direction: row;
-}
-#tabs-bui9-tabpanel-2 > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2){
+div.st-er{
     flex-direction: row;
 }
 
-#tabs-bui3-tabpanel-2 > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2){
+div.st-es{
     flex-direction: row;
 }
 
-#tabs-bui9-tabpanel-3 > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2){
+div.st-et{
     flex-direction: row;
 }
 
-#tabs-bui3-tabpanel-3 > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2){
+div.st-bz{
     flex-direction: row;
 }
 
@@ -74,19 +71,16 @@ div.css-1p1nwyz:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-chi
 }
 
 /* centralizando hyperlink da fonte */
-div.element-container:nth-child(15) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1) > a:nth-child(1) > img:nth-child(1){
+div.element-container:nth-child(16) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1) > a:nth-child(1) > img:nth-child(1){
     width: 200px;
     padding-left: 84px; 
 }
 
-div.css-1nt4hzx:nth-child(5) > div:nth-child(1){
+/* centralizando botao do cache */
+div.css-1p1nwyz:nth-child(6) > div:nth-child(1){
     text-align: center;
 }
 
-div.st-ct{
-   flex-direction: row; 
+#root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4{
+    text-align: center;
 }
-
-div.st-cs{
-    flex-direction: row; 
- }
