@@ -1,15 +1,26 @@
-# Commodities
+<div class="logo" align='center'>
 
-<div class="stats" align="center">
+<img src="./imagens/OBInvestLogo.png"  width="400" height="80">
+
+![Static Badge](https://img.shields.io/badge/Dashboard-Commodities-ffbd45)
+![GitHub language count](https://img.shields.io/github/languages/count/jtentis/commodities?color=ffbd45)
+![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/y/jtentis/commodities?color=ffbd45)
 
 </br>
 
-## Trabalho sobre análise e variância de commodities!
+</div>
+
+O aplicativo permite aos usuários analisar e obter informações atualizadas sobre o mercado de commodities, incluindo o preço e a variação de diversos produtos. A análise abrange um período de tempo específico, determinado pelo usuário e examina as variações dos preços de commodities-chave, como petróleo, ouro, grãos, metais e outros produtos relevantes para o mercado global. Os dados foram coletados a partir de fontes confiáveis, como: Yahoo Finance.
+
+#
+
+<div class="body" align="center">
 
 ![](/imagens/conclusaoPt2.gif) 
 
-</div class="stats" align="center">
+</div>
   
+</br>
 
 # Instalação 🚀
 
